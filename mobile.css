@@ -5,7 +5,7 @@
    ============================================================ */
 
 #m-nav { display: none; }              /* hidden on desktop */
-#m-toggle { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; } /* a11y checkbox off-screen */
+#m-toggle { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
 
 @media (max-width: 640px) {
 
@@ -23,6 +23,11 @@
     max-width: 100vw !important;
   }
 
+  /* Cut the big desktop VERTICAL padding (the empty-space fix) */
+  #cooploy-root [style*="padding:120px 56px"] { padding: 44px 16px !important; }
+  #cooploy-root [style*="padding:120px"]      { padding-top: 44px !important; padding-bottom: 44px !important; }
+  header#top { padding-top: 8px !important; padding-bottom: 32px !important; }
+
   /* Neutralize fixed-width desktop wrappers */
   #cooploy-root [style*="width:1320px"], #cooploy-root [style*="width: 1320px"],
   #cooploy-root [style*="width:1200px"], #cooploy-root [style*="width:900px"],
@@ -30,14 +35,16 @@
   #cooploy-root [style*="width:640px"],  #cooploy-root [style*="width:580px"],
   #cooploy-root [style*="width:480px"] { width: auto !important; max-width: 100% !important; }
 
-  #cooploy-root [style*="gap:64px"] { gap: 26px !important; }
-  #cooploy-root [style*="gap:48px"] { gap: 20px !important; }
+  #cooploy-root [style*="gap:64px"] { gap: 24px !important; }
+  #cooploy-root [style*="gap:48px"] { gap: 18px !important; }
+  #cooploy-root [style*="gap:40px"] { gap: 18px !important; }
 
-  /* ---- 1. Hide fixed right HUD rail ---- */
+  /* ---- 1. Hide fixed right HUD rail + the top HUD strip ---- */
   #hud-rail { display: none !important; }
+  [data-screen-label="HUD bar"] { display: none !important; }   /* "Cooploy // … / Systems nominal / UTC / coords" */
 
-  /* ---- 2. Top ticker: contained marquee ---- */
-  [data-screen-label="HUD bar"] { overflow: hidden !important; max-width: 100vw !important; }
+  /* ---- 2. Top ticker (keyword marquee): contained ---- */
+  [data-screen-label="Ticker"] { overflow: hidden !important; max-width: 100vw !important; }
 
   /* ---- 3. Desktop nav -> mobile hamburger ---- */
   nav[data-screen-label="Nav"] { display: none !important; }
@@ -64,67 +71,84 @@
     max-width: 100% !important; overflow-x: auto !important;
   }
 
-  /* ---- 7. Hero fit ---- */
+  /* ---- 7. Hero fit + slightly larger body copy for legibility ---- */
   header#top { overflow: hidden !important; }
   header#top h1 { font-size: clamp(30px, 9vw, 44px) !important; line-height: 1.04 !important; }
-  header#top p  { font-size: 15px !important; line-height: 1.5 !important; }
+  header#top p  { font-size: 15.5px !important; line-height: 1.55 !important; }
+  #cooploy-root p { font-size: 15px !important; }
 
-  #cooploy-root a[href="#contact"]:not(#m-cta), #cooploy-root a[href="#packages"] {
-    display: block !important; text-align: center !important;
-  }
+  /* Primary buttons: full-width, tappable */
+  #cooploy-root a[href="#contact"]:not(#m-cta):not([data-quote]),
+  #cooploy-root a[href="#packages"] { display: block !important; text-align: center !important; }
+
+  /* ---- 8. Green arrows on the outline CTAs (no hover on phones) ---- */
+  #cooploy-root a[href="#packages"] { color: #C6FF4A !important; border-color: rgba(198,255,74,0.4) !important; }
+
   #cooploy-root [style*="font-size:9"], #cooploy-root [style*="font-size:10px"] { font-size: 11px !important; }
 }
 
 /* ============================================================
-   Injected mobile nav (#m-nav): fixed top bar, logo + hamburger.
-   #m-nav is position:fixed (relative to viewport — its ancestors
-   have no transform), burger is IN-FLOW, panel is ABSOLUTE.
+   Injected mobile nav (#m-nav): fixed bar, orbit logo + burger,
+   FULL-SCREEN overlay menu (readable). Pure CSS toggle.
    ============================================================ */
 @media (max-width: 640px) {
+  /* NOTE: no backdrop-filter here — it would become the containing block for
+     the panel's position:fixed and stop the overlay filling the viewport. */
   #m-nav {
-    position: fixed !important; top: 0; left: 0; width: 100%; box-sizing: border-box; z-index: 60;
+    position: fixed !important; top: 0; left: 0; width: 100%; box-sizing: border-box; z-index: 68;
     align-items: center; justify-content: space-between;
     padding: 10px 16px;
-    background: rgba(5, 7, 11, 0.94);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    background: #06080c;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
+  /* orbit logo: mark + wordmark */
   #m-nav #m-logo {
-    font-family: 'Space Grotesk', sans-serif; font-weight: 800;
-    letter-spacing: 0.02em; font-size: 18px; color: #EAF0E6; text-decoration: none;
+    display: inline-flex !important; align-items: center; gap: 9px; text-decoration: none;
   }
-  #m-nav #m-logo b { color: #C6FF4A; }
+  #m-nav #m-logo svg { width: 22px; height: 22px; display: block; flex: 0 0 auto; }
+  #m-nav #m-logo span {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: 0.01em;
+    font-size: 17px; color: #EAF0E6;
+  }
 
-  /* hamburger button — 3 accent bars, clearly visible, in-flow */
+  /* hamburger button — 3 accent bars, above the overlay so it also closes it */
   #m-burger {
+    position: relative; z-index: 70;
     display: inline-flex !important; flex: 0 0 auto; flex-direction: column; justify-content: center; gap: 4px;
     width: 46px !important; height: 40px !important; box-sizing: border-box !important; padding: 0 11px;
     border: 1px solid rgba(198, 255, 74, 0.45); border-radius: 9px; cursor: pointer; background: rgba(198,255,74,0.05);
   }
-  #m-burger span { display: block !important; height: 2px !important; width: 100%; background: #C6FF4A; border-radius: 2px; transition: .2s; }
+  #m-burger span { display: block !important; height: 2px !important; width: 100%; background: #C6FF4A; border-radius: 2px; transition: .25s; }
   #m-toggle:checked ~ #m-burger { border-color: #C6FF4A; background: rgba(198, 255, 74, 0.12); }
   #m-toggle:checked ~ #m-burger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   #m-toggle:checked ~ #m-burger span:nth-child(2) { opacity: 0; }
   #m-toggle:checked ~ #m-burger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  /* dropdown panel — absolute relative to the fixed #m-nav */
+  /* FULL-SCREEN overlay menu */
   #m-menu-panel {
-    display: none; position: absolute; right: 16px; top: 56px; width: min(80vw, 320px);
-    flex-direction: column; gap: 2px; padding: 10px; z-index: 66;
-    background: #0B0E09; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    display: none; position: fixed; inset: 0; z-index: 66;
+    flex-direction: column; justify-content: center; gap: 2px;
+    padding: 88px 28px 40px; box-sizing: border-box;
+    background: rgba(5, 7, 11, 0.95); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
   }
   #m-toggle:checked ~ #m-menu-panel { display: flex; }
   #m-nav #m-menu-panel a {
-    font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em;
-    font-size: 12.5px; color: #EAF0E6; text-decoration: none; padding: 13px 12px; border-radius: 9px;
-    display: block !important; text-align: left !important; white-space: nowrap;
+    display: block !important; text-align: left !important;
+    font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.04em;
+    font-size: 26px; font-weight: 700; line-height: 1.1;
+    color: #EAF0E6 !important; text-decoration: none; padding: 16px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
   }
-  #m-nav #m-menu-panel #m-cta { text-align: center !important; }
-  #m-menu-panel a:active, #m-menu-panel a:hover { background: rgba(255, 255, 255, 0.05); color: #C6FF4A; }
-  #m-menu-panel #m-lang { color: #A7B1AA; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 14px; }
+  #m-nav #m-menu-panel a:active { color: #C6FF4A; }
+  #m-menu-panel #m-lang {
+    font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.1em;
+    font-size: 13px !important; font-weight: 500 !important; color: #A7B1AA !important; border-bottom: none !important; padding-top: 22px !important;
+  }
   #m-menu-panel #m-cta {
-    background: #C6FF4A; color: #0B0E09; font-weight: 600; text-align: center !important;
-    margin-top: 8px; box-shadow: 0 0 24px rgba(198, 255, 74, 0.18);
+    font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 14px !important; font-weight: 600 !important;
+    background: #C6FF4A; color: #0B0E09 !important; text-align: center !important;
+    padding: 18px !important; border-radius: 10px; border-bottom: none !important; margin-top: 14px;
+    box-shadow: 0 0 30px rgba(198, 255, 74, 0.2);
   }
 }
