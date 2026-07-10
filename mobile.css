@@ -59,10 +59,17 @@
   }
   #cooploy-root h2 { font-size: clamp(24px, 7.4vw, 36px) !important; line-height: 1.06 !important; }
   #cooploy-root h3 { font-size: clamp(18px, 5.2vw, 24px) !important; }
-  #cooploy-root p, #cooploy-root li,
+  /* section-title rows (h2 + divider + "Pillar 0X" label): wrap so the
+     label drops to its own line instead of squeezing into a thin strip */
+  #cooploy-root div:has(> h2) { flex-wrap: wrap !important; row-gap: 8px; }
+  #cooploy-root p, #cooploy-root li { overflow-wrap: break-word; white-space: normal !important; }
+  /* labels/links wrap at word boundaries only (no ugly mid-word breaks) */
   #cooploy-root a:not(#m-cta):not(#m-logo), #cooploy-root span:not([data-nowrap]) {
-    overflow-wrap: anywhere; white-space: normal !important;
+    overflow-wrap: normal; white-space: normal !important;
   }
+  /* studio-console terminal: keep monospace alignment, shrink to fit + scroll */
+  #term-body, #term-body * { white-space: pre !important; overflow-wrap: normal !important; }
+  #term-body { font-size: 10.5px !important; line-height: 1.55 !important; overflow-x: auto !important; }
 
   /* ---- 6. Contain media / wide boxes ---- */
   #cooploy-root canvas, #cooploy-root img, #cooploy-root svg,
