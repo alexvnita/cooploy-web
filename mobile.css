@@ -7,6 +7,34 @@
 #m-nav { display: none; }              /* hidden on desktop */
 #m-toggle { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
 
+/* ============================================================
+   Accessibility (global — desktop + mobile)
+   ============================================================ */
+/* Contrast lift for the two dimmest label greys. Site is dark-only (no light
+   theme / no prefers-color-scheme). Measured on the live bg rgb(5,7,11):
+   original --dim2 #6A756E = 4.21:1 (fails AA on 9.5px labels), --dim3 #55625B
+   = 3.15:1 (fails). The bundle sets these tokens inline at runtime, so a plain
+   selector loses the cascade — !important is required to win over the inline
+   value. New: #808c84 = 5.78:1, #7d8a82 = 5.60:1 (both clear AA, order kept). */
+#cooploy-root, :root { --dim2: #808c84 !important; --dim3: #7d8a82 !important; }
+/* Visible keyboard focus on every interactive element, site-wide (privacy page
+   has no #cooploy-root, so this is global). Mouse users unaffected (:focus-visible). */
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible, summary:focus-visible,
+[tabindex]:focus-visible, #m-nav label:focus-visible {
+  outline: 2px solid #C6FF4A !important; outline-offset: 2px; border-radius: 4px;
+}
+/* Skip-to-content link — only visible when focused */
+#skip-link {
+  position: fixed; left: 12px; top: -64px; z-index: 200;
+  background: #C6FF4A; color: #0B0E09; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 600; letter-spacing: .04em; padding: 11px 16px;
+  border-radius: 8px; text-decoration: none; transition: top .15s ease;
+}
+#skip-link:focus { top: 12px; }
+/* Keyboard focus for the hamburger (the off-screen checkbox holds focus; ring the visible burger) */
+#m-toggle:focus-visible ~ #m-burger { outline: 2px solid #C6FF4A; outline-offset: 2px; }
+
 @media (max-width: 640px) {
 
   /* ---- 0. Kill horizontal overflow (root cause) ---- */
