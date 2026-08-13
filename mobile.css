@@ -16,7 +16,11 @@
    = 3.15:1 (fails). The bundle sets these tokens inline at runtime, so a plain
    selector loses the cascade — !important is required to win over the inline
    value. New: #808c84 = 5.78:1, #7d8a82 = 5.60:1 (both clear AA, order kept). */
-#cooploy-root, :root { --dim2: #808c84 !important; --dim3: #7d8a82 !important; }
+html:not([data-theme="light"]) #cooploy-root,
+html:not([data-theme="light"]):root { --dim2: #808c84 !important; --dim3: #7d8a82 !important; }
+/* light theme needs darker greys: #5c6660 = 5.6:1 on #f4f6f1 */
+html[data-theme="light"] #cooploy-root,
+html[data-theme="light"]:root { --dim2: #5c6660 !important; --dim3: #59635d !important; }
 /* Visible keyboard focus on every interactive element, site-wide (privacy page
    has no #cooploy-root, so this is global). Mouse users unaffected (:focus-visible). */
 a:focus-visible, button:focus-visible, input:focus-visible,
@@ -91,6 +95,13 @@ textarea:focus-visible, select:focus-visible, summary:focus-visible,
      label drops to its own line instead of squeezing into a thin strip */
   #cooploy-root div:has(> h2) { flex-wrap: wrap !important; row-gap: 8px; }
   #cooploy-root p, #cooploy-root li { overflow-wrap: break-word; white-space: normal !important; }
+  /* headings must wrap too: 'Rechttoe rechtaan' rendered 423px wide on a 390px screen */
+  #cooploy-root h1, #cooploy-root h2, #cooploy-root h3 { white-space: normal !important; }
+  /* the contact wrapper kept its 56px desktop padding, squeezing the form
+     into 236px of a 390px screen. Match it by max-width, not by padding. */
+  #cooploy-root [style*="1320px"], header#top [style*="1320px"] {
+    padding-left: 16px !important; padding-right: 16px !important;
+  }
   /* labels/links wrap at word boundaries only (no ugly mid-word breaks) */
   #cooploy-root a:not(#m-cta):not(#m-logo), #cooploy-root span:not([data-nowrap]) {
     overflow-wrap: normal; white-space: normal !important;
@@ -176,7 +187,7 @@ textarea:focus-visible, select:focus-visible, summary:focus-visible,
     font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.1em;
     font-size: 13px !important; font-weight: 500 !important; color: #A7B1AA !important; border-bottom: none !important; padding-top: 22px !important;
   }
-  #m-menu-panel #m-cta {
+  #m-nav #m-menu-panel a#m-cta {
     font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.08em;
     font-size: 14px !important; font-weight: 600 !important;
     background: #C6FF4A; color: #0B0E09 !important; text-align: center !important;
